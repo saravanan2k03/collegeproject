@@ -409,7 +409,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
                 children: [
                   TextFormField(
-                    maxLength: 12,
+                    maxLength: 10,
                     cursorColor: Colors.red,
                     controller: _taskController,
                     textCapitalization: TextCapitalization.characters,
