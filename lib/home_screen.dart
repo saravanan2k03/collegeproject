@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, unused_field
+// ignore_for_file: prefer_const_constructors, unused_field, sized_box_for_whitespace, duplicate_ignore
 
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -294,20 +294,20 @@ class _HomeScreenState extends State<HomeScreen> {
     EasyLoading.showSuccess('Success!');
   }
 
+  //uploadfile
   uploadFile() async {
+    // print("imagesup:$file");
     EasyLoading.show(status: 'loading...');
-
-    Reference imageFile =
-        FirebaseStorage.instance.ref().child("CSE").child(_taskController.text);
+    Reference imageFile = FirebaseStorage.instance
+        .ref("saro")
+        .child("CSE")
+        .child(_taskController.text);
     await imageFile.putFile(file!).whenComplete(() async {
       url = await imageFile.getDownloadURL();
 
-      print(url);
+      // print(url);
       //upload code
       singam();
-      setState(() {
-        file = null;
-      });
     });
   }
 
@@ -347,14 +347,16 @@ class _HomeScreenState extends State<HomeScreen> {
           .doc(_taskController.text)
           .get()
           .then((ds) {
-        if (ds.exists) {
-          showAlertDialog(context);
+        if (!ds.exists) {
+          uploadFile();
+        } else {
+          EasyLoading.showError('Already Created!',
+              duration: Duration(milliseconds: 1500));
           _taskController.clear();
         }
-        return null;
       });
     } catch (e) {
-      print(e);
+      // print(e);
     }
   }
 
@@ -386,6 +388,9 @@ class _HomeScreenState extends State<HomeScreen> {
     // _taskControllerhosteller.clear(); //
     dropdownvalue = "Male";
     dropvalues = "Hosteller"; //
+    setState(() {
+      file = null;
+    });
   }
 
   @override
@@ -422,12 +427,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       hintText: 'Enter Roll No',
                     ),
-                    onChanged: (value) {
-                      _fetchUserData();
-                    },
+                    // onChanged: (value) {
+                    //   _fetchUserData();
+                    // },
                     validator: (value) {
-                      if (value != null && value.length < 12) {
-                        return "Enter Roll No 12 characters";
+                      if (value != null && value.isEmpty) {
+                        EasyLoading.showError('Enter Roll No!',
+                            duration: Duration(milliseconds: 1000));
+                        return "Enter Roll No";
                       }
                       return null;
                     },
@@ -502,7 +509,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         }
                         final DateFormat formatter = DateFormat('dd-MM-yyyy');
                         final String formatted = formatter.format(pickedate!);
-                        print(formatted);
+                        // print(formatted);
                         _taskControllerdob.text = formatted;
                       });
                     },
@@ -747,6 +754,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       if (value != null && value.isEmpty) {
                         return null;
                       }
+                      return null;
                     },
                   ),
                   const SizedBox(
@@ -759,6 +767,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       if (value != null && value.isEmpty) {
                         return null;
                       }
+                      return null;
                     },
                   ),
                   const SizedBox(
@@ -789,6 +798,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       if (value != null && value.isEmpty) {
                         return null;
                       }
+                      return null;
                     },
                   ),
                   const SizedBox(
@@ -801,6 +811,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       if (value != null && value.isEmpty) {
                         return null;
                       }
+                      return null;
                     },
                   ),
                   const SizedBox(
@@ -860,20 +871,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ],
                   ),
-                  // const SizedBox(
-                  //   height: 13,
-                  // ),
-                  // Row(
-                  //   mainAxisAlignment: MainAxisAlignment.center,
-                  //   children: [
-                  //     ElevatedButton(
-                  //       onPressed: () {
-                  //         uploadFile();
-                  //       },
-                  //       child: const Text("Upload Image"),
-                  //     ),
-                  //   ],
-                  // ),
                   const SizedBox(
                     height: 13,
                   ),
@@ -999,7 +996,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         return;
                       }
                       _formKey.currentState!.save();
-                      uploadFile();
+                      _fetchUserData();
                     },
                     child: const Text("Submit"),
                   ),
